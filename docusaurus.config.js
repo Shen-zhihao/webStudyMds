@@ -2,41 +2,41 @@
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: '前端学习笔记',
-  tagline: 'JavaScript · React · Node.js · 前端工程化',
-  favicon: 'img/favicon.ico',
+  title: "Shen Zhihao",
+  tagline: "Frontend Engineer · Notes · Engineering Practice",
+  favicon: "img/favicon.ico",
 
-  url: 'https://Shen-zhihao.github.io',
-  baseUrl: '/webStudyMds/',
+  url: "https://Shen-zhihao.github.io",
+  baseUrl: "/webStudyMds/",
 
-  organizationName: 'Shen-zhihao',
-  projectName: 'webStudyMds',
+  organizationName: "Shen-zhihao",
+  projectName: "webStudyMds",
 
-  onBrokenLinks: 'warn',
-  onBrokenMarkdownLinks: 'warn',
+  onBrokenLinks: "warn",
+  onBrokenMarkdownLinks: "warn",
 
   markdown: {
-    format: 'md',
+    format: "detect",
   },
 
   i18n: {
-    defaultLocale: 'zh-Hans',
-    locales: ['zh-Hans'],
+    defaultLocale: "zh-Hans",
+    locales: ["zh-Hans"],
   },
 
   presets: [
     [
-      'classic',
+      "classic",
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
-          routeBasePath: '/',
-          sidebarPath: './sidebars.js',
-          editUrl: 'https://github.com/Shen-zhihao/webStudyMds/tree/main/',
+          routeBasePath: "/docs",
+          sidebarPath: "./sidebars.js",
+          editUrl: "https://github.com/Shen-zhihao/webStudyMds/tree/main/",
         },
         blog: false,
         theme: {
-          customCss: './src/css/custom.css',
+          customCss: "./src/css/custom.css",
         },
       }),
     ],
@@ -44,12 +44,12 @@ const config = {
 
   themes: [
     [
-      '@easyops-cn/docusaurus-search-local',
+      "@easyops-cn/docusaurus-search-local",
       /** @type {import("@easyops-cn/docusaurus-search-local").PluginOptions} */
       ({
         hashed: true,
-        language: ['en', 'zh'],
-        docsRouteBasePath: '/',
+        language: ["en", "zh"],
+        docsRouteBasePath: "/docs",
         highlightSearchTermsOnTargetPage: true,
         searchResultLimits: 10,
       }),
@@ -60,44 +60,59 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       colorMode: {
-        defaultMode: 'light',
+        defaultMode: "light",
         disableSwitch: false,
         respectPrefersColorScheme: true,
       },
       navbar: {
-        title: '前端学习笔记',
+        title: "Shen Zhihao",
         items: [
           {
-            type: 'docSidebar',
-            sidebarId: 'tutorialSidebar',
-            position: 'left',
-            label: '文档',
+            to: "/",
+            label: "主页",
+            position: "left",
           },
           {
-            href: 'https://github.com/Shen-zhihao/webStudyMds',
-            label: 'GitHub',
-            position: 'right',
+            to: "/docs/",
+            label: "知识库",
+            position: "left",
+          },
+          {
+            href: "https://github.com/Shen-zhihao/webStudyMds",
+            label: "GitHub",
+            position: "right",
           },
         ],
       },
       footer: {
-        style: 'dark',
+        style: "dark",
         links: [
           {
-            title: '文档',
+            title: "专题入口",
             items: [
-              { label: 'JavaScript', to: '/javascript/js-basics' },
-              { label: 'React', to: '/react/react-basics' },
-              { label: '前端工程化', to: '/engineering/engineering-architecture' },
+              { label: "React", to: "/docs/react/react-basics" },
+              { label: "JavaScript", to: "/docs/javascript/js-basics" },
+              { label: "Node.js", to: "/docs/nodejs/nodejs-basics" },
+              {
+                label: "前端工程化",
+                to: "/docs/engineering/engineering-architecture",
+              },
+            ],
+          },
+          {
+            title: "个人主页",
+            items: [
+              { label: "首页", to: "/" },
+              { label: "文档总览", to: "/docs/" },
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} 前端学习笔记. Built with Docusaurus.`,
+        copyright: `Copyright © ${new Date().getFullYear()} Shen Zhihao. Built with Docusaurus.`,
       },
       prism: {
-        theme: require('prism-react-renderer').themes.github,
-        darkTheme: require('prism-react-renderer').themes.dracula,
-        additionalLanguages: ['bash', 'json', 'typescript', 'scss', 'less'],
+        theme: require("prism-react-renderer").themes.github,
+        darkTheme: require("prism-react-renderer").themes.dracula,
+        additionalLanguages: ["bash", "json", "typescript", "scss", "less"],
       },
     }),
 };

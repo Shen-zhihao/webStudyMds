@@ -1,0 +1,185 @@
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import Link from "@docusaurus/Link";
+
+<div className="home-shell">
+  <section className="hero-panel">
+    <div className="hero-copy">
+      <div className="eyebrow">PERSONAL HOMEPAGE · KNOWLEDGE BASE</div>
+      <h1>Shen Zhihao</h1>
+      <p className="hero-tagline">前端开发者 / 工程化实践者 / 持续把项目经验沉淀成文档的人。</p>
+      <p className="hero-summary">
+        这个站点不再只是单纯的笔记仓库，而是一个以个人能力画像为核心、以系统化文档为支撑的主页。
+        你可以先快速了解我的技术方向，再从下方 Tab 直接进入对应专题。
+      </p>
+      <div className="hero-actions">
+        <Link className="button button--primary button--lg hero-button" to="/docs/">浏览全部文档</Link>
+        <Link className="button button--secondary button--lg hero-button ghost-button" to="/docs/engineering/engineering-architecture">查看工程化专题</Link>
+      </div>
+      <div className="hero-stats">
+        <div className="stat-card">
+          <strong>23</strong>
+          <span>篇技术文档</span>
+        </div>
+        <div className="stat-card">
+          <strong>6</strong>
+          <span>个专题方向</span>
+        </div>
+        <div className="stat-card">
+          <strong>React / TS</strong>
+          <span>核心实践栈</span>
+        </div>
+      </div>
+    </div>
+    <div className="hero-profile">
+      <div className="avatar-orb">
+        <span>React</span>
+      </div>
+      <div className="profile-card">
+        <div className="profile-topline">技术标签</div>
+        <ul>
+          <li>React 全栈协作</li>
+          <li>TypeScript 工程化</li>
+          <li>前端架构与构建优化</li>
+          <li>Node.js 与工具链实践</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+<section className="timeline-panel">
+  <div className="section-title">内容结构</div>
+  <h2>从基础到工程化的技术沉淀</h2>
+  <div className="timeline-list">
+    <div className="timeline-item">
+      <div className="timeline-index">01</div>
+      <div>
+        <h3>语言基础</h3>
+        <p>JavaScript、TypeScript、ES6+、常用 API 与底层机制理解。</p>
+      </div>
+    </div>
+    <div className="timeline-item">
+      <div className="timeline-index">02</div>
+      <div>
+        <h3>框架实践</h3>
+        <p>React 基础、Hooks、Router、源码理解与常见开发模式。</p>
+      </div>
+    </div>
+    <div className="timeline-item">
+      <div className="timeline-index">03</div>
+      <div>
+        <h3>工程化体系</h3>
+        <p>Webpack、组件库、Monorepo、包管理、构建优化与 MCP 实战。</p>
+      </div>
+    </div>
+    <div className="timeline-item">
+      <div className="timeline-index">04</div>
+      <div>
+        <h3>问题求解</h3>
+        <p>场景题、混合开发、Next.js 与工程化面试问答，偏向实战视角。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+  <section className="knowledge-panel">
+    <div className="section-title">知识库入口</div>
+    <h2>通过 Tab 进入各专题文档</h2>
+    <p className="panel-intro">按专题浏览核心文章，进入后依旧保留原有的侧边栏与全文检索能力。</p>
+
+    <Tabs className="knowledge-tabs" groupId="knowledge-hub-tabs" defaultValue="react">
+      <TabItem value="react" label="React">
+        <div className="doc-grid">
+          <Link className="doc-card" to="/docs/react/react-basics">
+            <strong>React 基础</strong>
+            <span>Fiber、虚拟 DOM、协调机制与核心心智模型。</span>
+          </Link>
+          <Link className="doc-card" to="/docs/react/react-hooks">
+            <strong>React Hooks</strong>
+            <span>状态管理、副作用、自定义 Hook 与常见使用边界。</span>
+          </Link>
+          <Link className="doc-card" to="/docs/react/react-source-code">
+            <strong>React 源码解读</strong>
+            <span>从实现细节理解框架运行方式，适合进阶阅读。</span>
+          </Link>
+        </div>
+      </TabItem>
+      <TabItem value="javascript" label="JavaScript">
+        <div className="doc-grid">
+          <Link className="doc-card" to="/docs/javascript/js-basics">
+            <strong>JavaScript 基础到高级</strong>
+            <span>闭包、作用域、原型链、执行过程与类型系统。</span>
+          </Link>
+          <Link className="doc-card" to="/docs/javascript/typescript">
+            <strong>TypeScript 基础</strong>
+            <span>类型约束、泛型、工具类型与团队协作中的 TS 实践。</span>
+          </Link>
+          <Link className="doc-card" to="/docs/javascript/es2021">
+            <strong>ES2021+</strong>
+            <span>现代语法特性速览，适合用来快速更新语言知识面。</span>
+          </Link>
+        </div>
+      </TabItem>
+      <TabItem value="engineering" label="工程化">
+        <div className="doc-grid">
+          <Link className="doc-card" to="/docs/engineering/engineering-architecture">
+            <strong>前端工程化与架构</strong>
+            <span>Axios、pnpm、Monorepo、Rollup 等工程实践综述。</span>
+          </Link>
+          <Link className="doc-card" to="/docs/engineering/webpack">
+            <strong>Webpack 专题</strong>
+            <span>构建配置、插件机制、Tree Shaking 与性能优化。</span>
+          </Link>
+          <Link className="doc-card" to="/docs/engineering/mcp">
+            <strong>MCP 从入门到实战</strong>
+            <span>面向 AI 工具链的新型协议与实战落地思路。</span>
+          </Link>
+        </div>
+      </TabItem>
+      <TabItem value="nodejs" label="Node.js">
+        <div className="doc-grid">
+          <Link className="doc-card" to="/docs/nodejs/nodejs-basics">
+            <strong>Node.js 基础</strong>
+            <span>模块系统、HTTP、流处理与服务端协作基础。</span>
+          </Link>
+        </div>
+      </TabItem>
+      <TabItem value="layout" label="CSS / 布局">
+        <div className="doc-grid">
+          <Link className="doc-card" to="/docs/css-layout/html-css">
+            <strong>HTML 与 CSS</strong>
+            <span>标签体系、选择器、Flexbox 与常用布局能力。</span>
+          </Link>
+          <Link className="doc-card" to="/docs/css-layout/sass-less">
+            <strong>CSS 预处理</strong>
+            <span>Sass、Less 与样式组织方式，适合配合组件开发阅读。</span>
+          </Link>
+        </div>
+      </TabItem>
+      <TabItem value="interview" label="面试 / 场景">
+        <div className="doc-grid">
+          <Link className="doc-card" to="/docs/interview/engineering-qa">
+            <strong>工程化常见问题</strong>
+            <span>围绕构建、包管理、Monorepo 的高频问题整理。</span>
+          </Link>
+          <Link className="doc-card" to="/docs/interview/nextjs-qa">
+            <strong>Next.js 常见问题</strong>
+            <span>SSR、ISR、路由与性能策略的面试化拆解。</span>
+          </Link>
+          <Link className="doc-card" to="/docs/interview/scenario-qa">
+            <strong>场景相关问题</strong>
+            <span>更接近真实工作的解决思路，而不是纯记忆型答案。</span>
+          </Link>
+        </div>
+      </TabItem>
+    </Tabs>
+
+  </section>
+
+  <section className="manifesto-panel">
+    <div className="section-title">技术表达</div>
+    <blockquote>
+      把知识写成结构，把经验写成方法，把个人主页做成长期可维护的技术资产。
+    </blockquote>
+  </section>
+</div>
