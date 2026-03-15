@@ -13,11 +13,11 @@ $yarn add react-router-dom
 //react的路由默认是包容性路由，使用exact属性(精准匹配)或者Switch组件是将路由变成排他性路由, 分支匹配
     import React, { Component } from "react";
     import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
-    
+
     const Home = () => <div>home</div>;
     const About = () => <div>About</div>;
     const Topics = () => <div>Topics</div>;
-    
+
     class App extends Component {
       state = {};
       render() {
@@ -44,16 +44,16 @@ $yarn add react-router-dom
         );
       }
     }
-    
+
     export default App;
 ```
 
 ### 嵌套路由
 ```javascript
-//引入模块    
+//引入模块
     import React, { Component } from "react";
     import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
-//根路由 
+//根路由
     class App extends Component {
       render() {
         return (
@@ -79,9 +79,9 @@ $yarn add react-router-dom
         );
       }
     }
-    
+
     export default App;
-    
+
 //一级路由
     const About = () => {
       return <div>about</div>;
@@ -92,7 +92,7 @@ $yarn add react-router-dom
 
 
 
-            
+
 //嵌套子路由
     const HomeFirst = () => <div>home-first</div>;
     const HomeSec = () => <div>home-sec</div>;
@@ -102,7 +102,7 @@ $yarn add react-router-dom
       return (
         <div>
           <h1>home</h1>
-          
+
           <ul>
             <li>
               <Link to="/home/home-first">home-first</Link>
@@ -128,13 +128,13 @@ $yarn add react-router-dom
 ```javascript
  import React, { Component } from "react";
     import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
-    
+
     const Home = () => <div>home</div>;
     const Topics = (props) => {
       //获取传过来的id： props.match.params.id
       return <div> topics-id :{props.match.params.id} </div>;
     };
-    
+
     class App extends Component {
       state = {};
       render() {
@@ -176,16 +176,16 @@ $yarn add react-router-dom
 ```javascript
 //解构 Redirect 组件
 //搭配switch组件使用exact属性精准匹配
-<Switch> 
-    <Redirect from="/" to="/home" exact></Redirect> 
+<Switch>
+    <Redirect from="/" to="/home" exact></Redirect>
 </Switch>
 ```
 
 ### 路由鉴权
 ```javascript
 //在Route组件中，使用render渲染函数组件，返回结果前进行判断，如果不满足条件则使用重定向(Redirect)另一个页面
-<Switch> 
-  <Route path="/userCenter" 
+<Switch>
+  <Route path="/userCenter"
   	render={() => { localStorage.getItem("token") ？<userCenter /> ：<Redirect to="/login"> </Redirect> } ></Route>  // 鉴权
   <Route path="/login" component={Login}></Route>
   <Route path="*" component={NotFound}></Route>   //404路由，使用的时候配合Switch组件，并且写在最后
@@ -198,19 +198,19 @@ $yarn add react-router-dom
 //解构Navlink组件
     import {  NavLink } from "react-router-dom";
 //使用的时候需要精准匹配
-    <li><NavLink to="/home" exact >home</NavLink></li>  
+    <li><NavLink to="/home" exact >home</NavLink></li>
 //使用activeClassName属性修改默认类名
-   <li><NavLink to="/home" exact activeClassName = "abc" >home</NavLink></li>   
+   <li><NavLink to="/home" exact activeClassName = "abc" >home</NavLink></li>
 //使用activeStyle属性修改选中时样式
-   <li><NavLink to="/home" exact activeStyle = {{color : red }} >home</NavLink></li>   
+   <li><NavLink to="/home" exact activeStyle = {{color : red }} >home</NavLink></li>
 ```
 
 ### 路由传参
 ```javascript
-1、动态参数    
+1、动态参数
 // props.match.params.id
-    
-2、url传参   
+
+2、url传参
     <Link to="/topics/2" search:"?a=3&b=4" >About</Link>
 //使用H5自带的URLSearchParams中的get()方法去匹配取出参数
     const About = (props) => {
@@ -221,8 +221,8 @@ $yarn add react-router-dom
       console.log(a.get("a"));
       return <div>about</div>;
     };
-     
-3、state传参  
+
+3、state传参
     <Link to="/topics/2" state:{msg:"hello"} >Topics2</Link>
 //在该传参的组件中打印 props.location 获取参数
     const Topics = (props) => {
@@ -320,5 +320,88 @@ function MyComponent() {
 | `createBrowserRouter` | 服务端渲染专用 API | 整合 Remix 的全栈能力 |
 
 
+### React Router v7（Remix 合并版）核心特性
 
+#### Framework 模式 vs Library 模式
+```javascript
+// React Router v7 提供两种使用模式：
+// 1. Framework 模式（整合 Remix 全栈能力，需要 react-router 配合构建工具）
+// 2. Library 模式（纯客户端路由，类似 v6 的使用方式，渐进式升级）
 
+// Library 模式：与 v6 用法基本一致，适合纯 SPA 项目
+import { createBrowserRouter, RouterProvider } from "react-router";
+
+const router = createBrowserRouter([
+  { path: "/", element: <Home /> },
+  { path: "/about", element: <About /> },
+]);
+
+function App() {
+  return <RouterProvider router={router} />;
+}
+
+// Framework 模式：需要配合 @react-router/dev 插件使用
+// 基于文件系统路由（app/routes/ 目录），自动生成路由配置
+// react-router.config.ts
+import type { Config } from "@react-router/dev/config";
+export default { ssr: true } satisfies Config;
+```
+
+#### Type-safe 路由（typegen 类型生成）
+```javascript
+// v7 Framework 模式下，运行 react-router typegen 会自动生成路由类型
+// 每个路由模块会获得类型安全的 params、loaderData 等
+
+// app/routes/user.$userId.tsx
+import type { Route } from "./+types/user.$userId";
+
+// loader 的参数和返回值都有完整类型推导
+export async function loader({ params }: Route.LoaderArgs) {
+  // params.userId 自动推导为 string，拼写错误会报类型错误
+  const user = await fetchUser(params.userId);
+  return { user };
+}
+
+export default function UserPage({ loaderData }: Route.ComponentProps) {
+  // loaderData.user 自动推导为 loader 返回的类型
+  return <h1>{loaderData.user.name}</h1>;
+}
+```
+
+#### 服务端数据加载 loader/action
+```javascript
+// loader：在路由渲染前加载数据（GET 请求）
+// action：处理表单提交和数据变更（POST/PUT/DELETE 请求）
+
+// app/routes/todos.tsx
+import type { Route } from "./+types/todos";
+
+export async function loader({ request }: Route.LoaderArgs) {
+  const todos = await db.todos.findMany();
+  return { todos };
+}
+
+export async function action({ request }: Route.ActionArgs) {
+  const formData = await request.formData();
+  const title = formData.get("title");
+  await db.todos.create({ data: { title } });
+  return { ok: true }; // 提交后自动重新调用 loader 刷新数据
+}
+
+export default function Todos({ loaderData }: Route.ComponentProps) {
+  return (
+    <div>
+      <ul>
+        {loaderData.todos.map((todo) => (
+          <li key={todo.id}>{todo.title}</li>
+        ))}
+      </ul>
+      {/* Form 组件提交后会自动触发 action，无需手动 fetch */}
+      <Form method="post">
+        <input name="title" />
+        <button type="submit">添加</button>
+      </Form>
+    </div>
+  );
+}
+```

@@ -7,10 +7,10 @@ sidebar_position: 3
 ##### 创建对象(引用类型)
 ```javascript
 1、构造函数创建：
-	var obj = new object();
+	var obj = new Object();
 
 2、字面量对象创建：
-	{}表示创建对象，本质是new object();
+	{}表示创建对象，本质是new Object();
 	var obj = {键值对，键值对，键值对 };   //key默认是字符串，""可加可不加，包含原型链信息；
 
 3、方法创建
@@ -85,11 +85,11 @@ sidebar_position: 3
     Object.values(obj) => ["bar", 42]
 
 4、Object.hasOwnProperty() ：key的判断；方法会返回一个布尔值，指示对象自身属性中是否具有指定的属性（也就是，是否有指定的键）。 
-   const object1 = {property1：42};
+   const object1 = {property1: 42};
    console.log(object1.hasOwnProperty('property1'));
 
-5、Object.hasOwn() ：检查某个对象自身是否拥有某个属性,接收两个参数，一个是对象，一个是属性(ES13)。 
-   const object1 = {property1：42};
+5、Object.hasOwn() ：检查某个对象自身是否拥有某个属性,接收两个参数，一个是对象，一个是属性(ES13)。
+   const object1 = {property1: 42};
    console.log(Object.hasOwn(object1,'property1'));
 
 6、Object.entries() ：返回键值对组成的数组；成员是参数对象自身的（不含继承的）所有可遍历（enumerable）属性的键值对数组。
@@ -140,17 +140,17 @@ sidebar_position: 3
 
 ##### json字符串
 ```javascript
-var str = '{"username":"lisi","age"= 18}';    //外层''，内层属性名(key)加"";
+var str = '{"username":"lisi","age": 18}';    //外层''，内层属性名(key)加"";
 
 将json转化为字符串(JSON.stringify)：
   var str = JSON.stringify(obj);
 
 将json字符串转化为json对象(JSON.parse)：
-  var str = '{"username":"lisi","age"= 18}';
+  var str = '{"username":"lisi","age": 18}';
   var o2 = JSON.parse(str);
 ```
 
-##### typeof 和 instance 区别
+##### typeof 和 instanceof 区别
 | 特性 | `typeof` | `instanceof` |
 | --- | --- | --- |
 | **用途** | 判断基本类型 | 判断对象是否为某构造函数的实例 |
@@ -169,7 +169,7 @@ var arr = new Array(10);     //长度为10的空数组
 var arr = Array.from({ length:10 }, (_, index) => index); // [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 2、使用字面量方式创建   []表示数组；
 var arr3 = [];
-var arr4['你好'，'再见']；
+var arr4 = ['你好', '再见'];
 3、清空数组
 arr.length = 0;
 4、清除数组

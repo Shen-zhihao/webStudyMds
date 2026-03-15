@@ -14,7 +14,7 @@ nodejs使用的模块化规范 叫做 common.js 规范:
 
 // exports对象是module对象的属性，包含导出的信息
 导出：module.exports ={}          // module.exports.a = a || exports.a = a;默认指向以module.exports为准
-导入：count a = require('');      //只有自定义模块需要写路径('./index')，导入对象永远是module.exports指向的对象
+导入：const a = require('');      //只有自定义模块需要写路径('./index')，导入对象永远是module.exports指向的对象
 ```
 
 # HTTP模块
@@ -84,7 +84,7 @@ let server = http.createServer((req, res) => {
         // end事件 在数据响应结束时触发
         res.on("end", () => {
           data = querystring.parse(data);
-          console.log(daat);
+          console.log(data);
         });
       });
       req.write(JSON.stringify({ name: "", age: "" })); // 发送的请求数据
@@ -181,7 +181,7 @@ server.listen(3000, () => {
 
 ##### format模块
 ```javascript
-const url = require("url"); 
+const url = require("url");
 const urlObj= {
     protocol: 'https',
     slashes: true,
@@ -240,7 +240,7 @@ server.listen(3000, () => {
 
 # querystring模块
 ```javascript
-const queryatring = require("querystring");
+const querystring = require("querystring");
 
 const str = "name=abc&age=18&location=shanghai";
 const obj = {
@@ -249,16 +249,16 @@ const obj = {
   location: "shanghai",
 };
 
-// 将query格式转成对象 
-  querystring.parse(str);  
+// 将query格式转成对象
+  querystring.parse(str);
 // => [Object: null prototype] {
 //   name: 'abc',
 //   age: '18',
 //   location: 'shanghai'
 // }
 
-// 将对象转成query格式字符串  
-  querystring.stringify(obj);  
+// 将对象转成query格式字符串
+  querystring.stringify(obj);
 // => "name=abc&age=18&location=shanghai"
 ```
 
@@ -302,8 +302,8 @@ setTimeout(() => {
 
 # fs模块
 ```javascript
-//导入模块 
-count fs = require('fs');
+//导入模块
+const fs = require('fs');
 //读取文件
 fs.readFile(url,'utf8',(err,data)=>{
     if (err) throw err;
@@ -349,7 +349,7 @@ xxxxxxxxxx.yyyyyyyyyyyyyyyy.zzzzzzz
 第一段: 头信息 签证:安全信息验证 口令 使用不可逆的哈希算法进行加密
 第二段: 你需要存储的信息  采用base64 可逆加密 截取一部分
 第三段: 额外信息 使用不可逆哈希算法进行加密
-浏览器在发送请求进行登陆时 
+浏览器在发送请求进行登陆时
 服务器验证完信息 信息正确 则生产一个 token
 服务器将这个token发送给前端 前端进行存储
 如果前端请求了需要验证登录权限的页面或数据 前端将token跟随请求发回后端
@@ -391,7 +391,7 @@ jwt.verify(token, 'rootbk', (err, data) => {
 $ npx express-generator
 #对于较老的 Node 版本，请通过 npm 将 Express 应用程序生成器安装到全局环境中并执行即可。
 $ npm install -g express-generator
-$ express name 
+$ express name
 #然后安装所有依赖包：
 $ cd myapp
 $ npm install
@@ -447,7 +447,7 @@ app.listen(conf.port, conf.host, () => { // 监听端口启动服务
 ```javascript
 // 搭建一个api 服务    应用程序接口
 // express可以快速搭建api服务
-// 接口的作用是给前端提供数据支持(CRUD)  
+// 接口的作用是给前端提供数据支持(CRUD)
 // 前端如何发送请求
 // ajax    get/post
 // href    get
@@ -478,7 +478,7 @@ app.get('/getItem', (req, res, next) => {
     // res.send({ username: 'zhangsan', age: 20 });
 
     // res.json() 发送数据 接受一个JSON 发送后自动终止请求
-    res.json({ data:{username: 'zhangsan', age: 20},status:success });
+    res.json({ data:{username: 'zhangsan', age: 20},status:'success' });
 });
 app.get('/getuser', (req, res, next) => {
     res.json({ username: 'lisi', age: 20, success: 1 });
@@ -512,7 +512,7 @@ app.use((req, res, next) => {
 
     // 如果在中间中没有使用 send 或 json 结束请求
     // 这个请求会被认为没有完成 进程将被挂起
-    // next 调用next可以将中间件的控制权交出 
+    // next 调用next可以将中间件的控制权交出
     // 将这个请求传递给下一个中间件
     next();
     // res.send('hahah');
@@ -552,3 +552,73 @@ app.listen(8877, 'localhost', () => {
 });
 ```
 
+##### Stream 流模块
+```javascript
+const fs = require('fs');
+
+// 可读流
+const readStream = fs.createReadStream('./bigfile.txt', { encoding: 'utf8' });
+readStream.on('data', (chunk) => {
+  console.log('收到数据块:', chunk.length);
+});
+readStream.on('end', () => console.log('读取完成'));
+
+// 可写流
+const writeStream = fs.createWriteStream('./output.txt');
+writeStream.write('Hello ');
+writeStream.write('World');
+writeStream.end(); // 关闭流
+
+// 管道（pipe）：将可读流的数据传输到可写流
+const readStream2 = fs.createReadStream('./input.txt');
+const writeStream2 = fs.createWriteStream('./output.txt');
+readStream2.pipe(writeStream2);
+
+// 常见应用：文件复制、HTTP 响应流、数据压缩
+const zlib = require('zlib');
+fs.createReadStream('./input.txt')
+  .pipe(zlib.createGzip())
+  .pipe(fs.createWriteStream('./input.txt.gz'));
+```
+
+##### Buffer 缓冲区
+```javascript
+// 创建 Buffer
+const buf1 = Buffer.alloc(10);          // 创建长度为 10 的空 Buffer
+const buf2 = Buffer.from('Hello');      // 从字符串创建
+const buf3 = Buffer.from([1, 2, 3]);    // 从数组创建
+
+// Buffer 操作
+buf2.toString();                        // 'Hello'
+buf2.length;                            // 5（字节数）
+Buffer.concat([buf2, Buffer.from(' World')]); // 拼接
+
+// 常用场景：处理二进制数据、文件 I/O、网络通信
+```
+
+##### process 进程对象
+```javascript
+// 环境变量
+console.log(process.env.NODE_ENV);
+
+// 命令行参数
+console.log(process.argv);
+
+// 当前工作目录
+console.log(process.cwd());
+
+// 退出进程
+process.exit(0);   // 正常退出
+process.exit(1);   // 异常退出
+
+// 监听未捕获异常
+process.on('uncaughtException', (err) => {
+  console.error('未捕获异常:', err);
+  process.exit(1);
+});
+
+// 监听未处理的 Promise 拒绝
+process.on('unhandledRejection', (reason) => {
+  console.error('未处理的 Promise 拒绝:', reason);
+});
+```

@@ -255,12 +255,12 @@ module.exports = {
 ```javascript
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin"); // 自动引入资源插件  npm install --save-dev html-webpack-plugin
-const MiniCssExtracPlugin = require("mini-css-extrac-plugin"); // css抽离
+const MiniCssExtractPlugin = require("mini-css-extract-plugin"); // css抽离
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");  //css压缩 npm install css-minimizer-webpack-plugin  --save-dev 
 const TerserPlugin = require("terser-webpack-plugin"); // js压缩  npm install --save-dev terser-webpack-plugin
-//加载toml、yarm、json5数据资源 npm install toml yarm json5 -D
+//加载toml、yaml、json5数据资源 npm install toml yaml json5 -D
 const toml = require("toml");
-const yarm = require("yarm");
+const yaml = require("yaml");
 const json5 = require("json5");
 
 module.exports = (env) => {
@@ -290,7 +290,7 @@ module.exports = (env) => {
       assetModuleFilename: "images/[contenthash][ext]", // 在images目录下，根据文件内容自动生成hash文件名
       publicPath: "https://*****.com/", // 公共路径（cdn域名或者本地localhost）
     },
-    mode: env.prodection ? "prodection" : "development", // 生产环境或者开发环境 package.json 启动命令：npx webpack --env prodection
+    mode: env.production ? "production" : "development", // 生产环境或者开发环境 package.json 启动命令：npx webpack --env production
     devtool: "cheap-module-source-map",     // 真实报错文件指向,生产环境一般不开启sourcemap
     // 插件（非必要的，缺少也不影响项目打包）
     plugins: [
@@ -303,7 +303,7 @@ module.exports = (env) => {
           removeAttributeQuotes: true, // 压缩，去掉引号
         },
       }),
-      new MiniCssExtracPlugin({
+      new MiniCssExtractPlugin({
         filename: "style/[contenthash].css",
       }),
     ],
@@ -336,9 +336,9 @@ module.exports = (env) => {
         {
           // 支持less
           // npm install style-loader css-loader less-loader less --save-dev
-          // 抽离 npm install mini-css-extrac-plugin  --save-dev   webpack5环境下构建的插件
+          // 抽离 npm install mini-css-extract-plugin  --save-dev   webpack5环境下构建的插件
           test: /\.(le|c)ss$/, // .less and .css
-          use: [MiniCssExtracPlugin.loader,/* "style-loader", */ "css-loader","less-loader"],
+          use: [MiniCssExtractPlugin.loader,/* "style-loader", */ "css-loader","less-loader"],
         },
         {
           test: /\.(woff|woff2|eot|ttf|oft)$/, // 正则字体文件
@@ -353,7 +353,7 @@ module.exports = (env) => {
           test: /\.xml$/,
           use: "xml-loader",
         },
-        //加载toml、yarm、json5数据资源
+        //加载toml、yaml、json5数据资源
         {
           test: /\.toml$/,
           type: "json",
@@ -362,10 +362,10 @@ module.exports = (env) => {
           },
         },
         {
-          test: /\.yarm$/,
+          test: /\.yaml$/,
           type: "json",
           parser: {
-            parse: yarm.parse,
+            parse: yaml.parse,
           },
         },
         {
@@ -435,12 +435,12 @@ module.exports = (env) => {
 ```javascript
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin"); // 自动引入资源插件  npm install --save-dev html-webpack-plugin
-const MiniCssExtracPlugin = require("mini-css-extrac-plugin"); // css抽离
+const MiniCssExtractPlugin = require("mini-css-extract-plugin"); // css抽离
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin"); //css压缩 npm install css-minimizer-webpack-plugin  --save-dev
 const TerserPlugin = require("terser-webpack-plugin"); // js压缩  npm install --save-dev terser-webpack-plugin
-//加载toml、yarm、json5数据资源 npm install toml yarm json5 -D
+//加载toml、yaml、json5数据资源 npm install toml yaml json5 -D
 const toml = require("toml");
-const yarm = require("yarm");
+const yaml = require("yaml");
 const json5 = require("json5");
 
 module.exports = {
@@ -463,7 +463,7 @@ module.exports = {
         removeAttributeQuotes: true, // 压缩，去掉引号
       },
     }),
-    new MiniCssExtracPlugin({
+    new MiniCssExtractPlugin({
       filename: "style/[contenthash].css",
     }),
   ],
@@ -485,10 +485,10 @@ module.exports = {
       {
         // 支持less
         // npm install style-loader css-loader less-loader less --save-dev
-        // 抽离 npm install mini-css-extrac-plugin  --save-dev   webpack5环境下构建的插件
+        // 抽离 npm install mini-css-extract-plugin  --save-dev   webpack5环境下构建的插件
         test: /\.(le|c)ss$/, // .less and .css
         use: [
-          MiniCssExtracPlugin.loader,
+          MiniCssExtractPlugin.loader,
           /* "style-loader", */ "css-loader",
           "less-loader",
         ],
@@ -506,7 +506,7 @@ module.exports = {
         test: /\.xml$/,
         use: "xml-loader",
       },
-      //加载toml、yarm、json5数据资源
+      //加载toml、yaml、json5数据资源
       {
         test: /\.toml$/,
         type: "json",
@@ -515,10 +515,10 @@ module.exports = {
         },
       },
       {
-        test: /\.yarm$/,
+        test: /\.yaml$/,
         type: "json",
         parser: {
-          parse: yarm.parse,
+          parse: yaml.parse,
         },
       },
       {
@@ -587,7 +587,7 @@ module.exports = {
   output: {
     filename: "scripts/[name].js", // 将所有的js放入同一个文件夹，并且根据文件名自动命名
   },
-  mode: "development", // 生产环境或者开发环境 package.json 启动命令：npx webpack --env prodection
+  mode: "development", // 生产环境或者开发环境 package.json 启动命令：npx webpack --env production
   devtool: "cheap-module-source-map", // 真实报错文件指向,生产
   devServer: {
     static: "./dist", // 监听根目录文件变化，自动刷新页面插件 npm install --save-dev webpack-dev-server
@@ -613,7 +613,7 @@ module.exports = {
     filename: "scripts/[name].[contenthash].js", // 将所有的js放入同一个文件夹，并且根据文件名自动命名
     publicPath: "https://*****.com/", // 公共路径（cdn域名或者本地localhost）
   },
-  mode: "prodection", // 生产环境或者开发环境 package.json 启动命令：npx webpack --env prodection
+  mode: "production", // 生产环境或者开发环境 package.json 启动命令：npx webpack --env production
   optimization: {
     minimizer: [new CssMinimizerPlugin(), new TerserPlugin()], //代码压缩 mode改为 production
   },
@@ -636,7 +636,7 @@ module.exports = (env) => {
       return merge(commonConfig,developmentConfig)
     case env.production :
       return merge(commonConfig,productionConfig)
-    defult:
+    default:
       return new Error()
   }
 }
@@ -683,4 +683,86 @@ module.exports = {
 这样，当 Webpack 编译时，MyPlugin 将会被启用并执行它的逻辑。
 ```
 
-# 
+# Webpack 与 Vite 对比
+
+##### 核心区别
+| 特性 | Webpack | Vite |
+| :---: | :---: | :---: |
+| **开发模式** | 打包后启动（Bundle-based） | 按需编译（No-bundle，基于 ESM） |
+| **启动速度** | 慢（需先打包整个项目） | 极快（利用浏览器原生 ESM，无需打包） |
+| **HMR 速度** | 随项目增大变慢 | 始终快速（精确更新修改的模块） |
+| **生产构建** | Webpack 自身 | Rollup（更高效的 Tree Shaking） |
+| **配置复杂度** | 高（需大量 loader/plugin 配置） | 低（开箱即用，约定优于配置） |
+| **生态系统** | 极其丰富（成熟、稳定） | 快速增长（兼容大部分 Rollup 插件） |
+| **浏览器兼容** | 支持旧浏览器（IE11+） | 需要现代浏览器（ES2015+） |
+| **适用场景** | 大型复杂项目、需要精细控制 | 中小型项目、追求开发体验 |
+
+##### Vite 为什么快
+```javascript
+// 1. 开发模式下不打包
+//    Webpack：将所有模块打包成 bundle 后再启动 dev server
+//    Vite：直接启动 dev server，利用浏览器原生 ESM 按需请求模块
+
+// 2. 依赖预构建（Pre-bundling）
+//    Vite 使用 esbuild（Go 编写，比 JS 快 10-100 倍）对 node_modules 中的依赖进行预构建
+//    将 CommonJS/UMD 转换为 ESM 格式，并合并小模块减少 HTTP 请求
+
+// 3. HMR 原理不同
+//    Webpack：重新构建依赖图中受影响的模块链
+//    Vite：精确定位到修改的模块，通过 ESM 动态导入替换，不受项目规模影响
+
+// 4. 生产构建使用 Rollup
+//    Rollup 的 Tree Shaking 更彻底，输出更小的包体积
+//    支持代码分割、动态导入等优化策略
+```
+
+##### Vite 基本配置
+```javascript
+// vite.config.ts
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    port: 3000,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+    },
+  },
+  build: {
+    outDir: 'dist',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],  // 分离第三方库
+        },
+      },
+    },
+  },
+  resolve: {
+    alias: {
+      '@': '/src',
+    },
+  },
+});
+```
+
+##### 何时选择 Webpack vs Vite
+```javascript
+// 选择 Webpack：
+// - 需要支持 IE11 等旧浏览器
+// - 已有大型项目，迁移成本高
+// - 需要复杂的自定义构建流程
+// - 依赖 Webpack 特有的 loader/plugin 生态
+
+// 选择 Vite：
+// - 新项目，追求极致的开发体验
+// - 项目只需支持现代浏览器
+// - 使用 React/Vue/Svelte 等主流框架
+// - 中小型项目，希望零配置快速启动
+```

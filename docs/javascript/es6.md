@@ -16,16 +16,16 @@ sidebar_position: 2
 
 ES6动态导入可以使用预获取（prefetch）、预加载（preload）加载技术。
   在浏览器中表现为：<link rel="preload" href="/main.js?t=3000" as="script">
-  在js中表现问：import(/* webpackPreload */ './**.js').then(()=>{});
+  在js中表现为：import(/* webpackPreload */ './**.js').then(()=>{});
 ```
 
 ##### let和const
 ```javascript
-都用来申明块级作用域（声明的变量在当前{}有效）的变量，不会申明提前； 
+都用来声明块级作用域（声明的变量在当前{}有效）的变量，不会声明提前； 
 ES6中通过const定义常量，常量通常用大写字母定义，多个单词之间用_分隔; 
 const声明的变量只允许一次赋值（基本数据类型）操作，引用情况下不能修改引用对象，但是可以修改对象属性； 
 let和const在变量声明预编译阶段存在TDZ暂时性死区（var 不存在）； 
-let和const在声明的变量不会绑定到window中（wiindow.a);
+let和const在声明的变量不会绑定到window中（window.a);
 ```
 
 ##### let 和 var 的区别
@@ -44,7 +44,7 @@ ES6新增函数语法糖（指令序列） - 简化函数写法；
   当返回一个对象时，需要加 ( ) ； 
 脱离了面向对象的范畴，
   this在箭头函数中，指向静态（固定、父级环境），指向被调用者当前定义时的环境；
-  箭头函数没有原型（ prototype 指向 undefind )；
+  箭头函数没有原型（ prototype 指向 undefined )；
 消除原本函数的二义性（函数可以直接执行，也可以创建实例）。
 ```
 
@@ -141,24 +141,24 @@ console.log(a,b);
 ##### set数据结构
 ```javascript
 ES6新增，类似于数组，有序结构，不同于数组的是，成员唯一（不可重复）；
-引用类型数据，有构造函数：let set = new set([]);
+引用类型数据，有构造函数：let set = new Set([]);
 数组的去重：
     var arr2 = [... new Set(arr)];         //...为展开运算；Set为ES6新增数据结构，不能有相同元素；
 转为数组：
     let arr = Array.from(set); 
 方法：
-set.protopyte.add():向数组中添加元素，出现在set结尾处，如果元素存在则忽略；返回值set对象；
-set.protopyte.delete():用于删除set中的指定元素，返回值是布尔值，表示是否删除成功；
-set.protopyte.size():返回set元元素数量；
-set.protopyte.has():判断set中是否具有某个值，返回值是布尔值；
-set.protopyte.clear():清空、删除所有元素；
+Set.prototype.add():向数组中添加元素，出现在set结尾处，如果元素存在则忽略；返回值set对象；
+Set.prototype.delete():用于删除set中的指定元素，返回值是布尔值，表示是否删除成功；
+Set.prototype.size:返回set元素数量（属性，非方法）；
+Set.prototype.has():判断set中是否具有某个值，返回值是布尔值；
+Set.prototype.clear():清空、删除所有元素；
 ```
 
 ##### map数据结构
 ```javascript
-类似于对象的哈希结构，提供了值-值得对应；
+类似于对象的哈希结构，提供了值-值的对应；
 map的键可以是任意数据类型；
-let map = new map();
+let map = new Map();
 设置对象的值：map.set(key,value);
 获取对象的值:map.get(key);
 判断成员是否存在：map.has(key);
@@ -169,8 +169,8 @@ let map = new map();
 ##### 基本数据类型-symbol
 ```javascript
 ES中第六种数据类型-解决对象属性命名重复问题，但是普通方法无法遍历（symbol方法可以遍历取出）；
-没有构造函数，需要symbol类型时用symbol函数创建；
-let uname = symbol(username);
+没有构造函数，需要Symbol类型时用Symbol函数创建；
+let uname = Symbol('username');
 let o ={};
     o[uname] = 'zhangsan';
     console.log(o[uname]);
@@ -190,7 +190,7 @@ Iterator 的遍历过程是这样的:
 每一次调用next方法，都会返回数据结构的当前成员的信息。具体来说，就是返回一个包含value和done两个属性的对象。其中，value属性是当前成员的值，done属性是一个布尔值，表示遍历是否结束。
   for...of:能遍历的内容必须有Iterator接口；
   遍历数组：
-  let set = new set([1,2,3])
+  let set = new Set([1,2,3])
   for (let value of set){
     console.log(value);
   }
@@ -210,16 +210,16 @@ Object.prototype[Symbol.iterator] = function(){
 ```
 
 # 异步方案
-##### Gnerator
+##### Generator
 ```javascript
 ES6新增遍历器对象；异步编程解决方案，让异步代码同步执行；一般情况配合co（co.js）模块使用；本质是一个自执行器；
-定义一个Gnerator函数需要在函数名和关键字中添加 * ；
+定义一个Generator函数需要在函数名和关键字中添加 * ；
 function * hello(){}
 Generator 函数是一个普通函数，但是有两个特征:
 一是，function关键字与函数名之间有一个星号；
 二是，函数体内部使用yield表达式，定义不同的内部状态（yield在英语里的意思就是“产出”）。
 调用Generator函数时，表示创建一个遍历器对象，内部包含一个next函数，将函数拆分成多个部分执行，每次执行next函数将运行到下一个yield语句为止；
-每次执行next会返回一个对象，返回值包含两个属性：yield表示产出内容，done表示简历是否结束；
+每次执行next会返回一个对象，返回值包含两个属性：yield表示产出内容，done表示遍历是否结束；
 ```
 
 ##### promise
@@ -402,7 +402,7 @@ function myPromise(excutor) {
 myPromise.prototype.then = function (onFulfilled, onRejected) {
     let self = this;
     // 5、状态改变调用then方法
-    onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : function (data) { resolve(data) };
+    onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : function (data) { return data };
     onRejected = typeof onRejected === 'function' ? onRejected : function (err) { throw err };
 
     // 7、添加callback
@@ -415,7 +415,7 @@ myPromise.prototype.then = function (onFulfilled, onRejected) {
             try {
                 let res = onFulfilled(self.value);
                 // 判断传入的值是不是Promise ，是就.then 不是就抛出结果
-                res instanceof myPromise ? res.then(resolve, reject) : resolve(x);
+                res instanceof myPromise ? res.then(resolve, reject) : resolve(res);
             }
             catch (err) {
                 reject(err)
@@ -425,9 +425,9 @@ myPromise.prototype.then = function (onFulfilled, onRejected) {
     if (self.status === 'rejected') {
         return new myPromise((resolve, reject) => {
             try {
-                let res = onRejected(self.value);
+                let res = onRejected(self.reason);
                 // 判断传入的值是不是Promise ，是就.then 不是就抛出结果
-                res instanceof myPromise ? res.then(resolve, reject) : resolve(x);
+                res instanceof myPromise ? res.then(resolve, reject) : resolve(res);
             }
             catch (err) {
                 reject(err)
@@ -437,14 +437,20 @@ myPromise.prototype.then = function (onFulfilled, onRejected) {
     if (self.status === 'pending') {
         return new myPromise((resolve, reject) => {
             self.onFulfilledCallbacks.push(() => {
-                let res = onRejected(self.value);
-                // 判断传入的值是不是Promise ，是就.then 不是就抛出结果
-                res instanceof myPromise ? res.then(resolve, reject) : resolve(x);
+                try {
+                    let res = onFulfilled(self.value);
+                    res instanceof myPromise ? res.then(resolve, reject) : resolve(res);
+                } catch (err) {
+                    reject(err);
+                }
             });
             self.onRejectedCallbacks.push(() => {
-                let res = onRejected(self.value);
-                // 判断传入的值是不是Promise ，是就.then 不是就抛出结果
-                res instanceof myPromise ? res.then(resolve, reject) : resolve(x);
+                try {
+                    let res = onRejected(self.reason);
+                    res instanceof myPromise ? res.then(resolve, reject) : resolve(res);
+                } catch (err) {
+                    reject(err);
+                }
             });
         })
     }
@@ -553,3 +559,137 @@ Object.defineProperty(obj, 'readOnlyProp', {
 });
 ```
 
+# 补充内容
+
+##### WeakSet
+```javascript
+WeakSet 与 Set 类似，但有以下区别：
+1. WeakSet 的成员只能是对象（或 Symbol），不能是其他类型的值
+2. WeakSet 中的对象都是弱引用，即垃圾回收机制不考虑 WeakSet 对该对象的引用
+3. WeakSet 不可遍历，没有 size 属性，没有 forEach 方法
+
+const ws = new WeakSet();
+const obj1 = { name: 'a' };
+const obj2 = { name: 'b' };
+
+ws.add(obj1);
+ws.add(obj2);
+ws.has(obj1); // true
+ws.delete(obj2); // true
+
+// 典型用途：存储 DOM 节点，不用担心节点从文档移除时引发内存泄漏
+// 典型用途：标记对象是否已被处理过
+```
+
+##### WeakMap
+```javascript
+WeakMap 与 Map 类似，但有以下区别：
+1. WeakMap 只接受对象（或 Symbol）作为键名，不接受其他类型的值作为键名
+2. WeakMap 的键名所指向的对象是弱引用，不计入垃圾回收机制
+3. WeakMap 不可遍历，没有 size 属性
+
+const wm = new WeakMap();
+const key1 = { id: 1 };
+const key2 = { id: 2 };
+
+wm.set(key1, 'value1');
+wm.set(key2, 'value2');
+wm.get(key1); // 'value1'
+wm.has(key2); // true
+wm.delete(key1); // true
+
+// 典型用途：以 DOM 节点作为键名，存储节点相关数据
+// 典型用途：部署私有属性（将私有数据存在 WeakMap 中，以实例为键名）
+```
+
+##### 可选链操作符（?.）
+```javascript
+ES2020 引入，允许读取位于连接的对象链深处的属性的值，而不必明确验证链中的每个引用是否有效。
+
+// 访问深层嵌套属性
+const city = user?.address?.city; // 如果 user 或 address 为 null/undefined，返回 undefined
+
+// 调用可能不存在的方法
+const result = obj?.method?.(); // 如果 method 不存在，返回 undefined
+
+// 访问数组元素
+const first = arr?.[0]; // 如果 arr 为 null/undefined，返回 undefined
+
+// 与空值合并运算符配合使用
+const city = user?.address?.city ?? '未知城市';
+
+// 注意：可选链不能用于赋值操作
+// user?.name = 'John'; // SyntaxError
+```
+
+##### Reflect（ES6）
+```javascript
+Reflect 是一个内置对象，提供拦截 JavaScript 操作的方法。与 Proxy 的 handler 方法一一对应。
+
+// 1. Reflect.get(target, prop, receiver) - 获取属性值
+const obj = { x: 1, y: 2 };
+Reflect.get(obj, 'x'); // 1
+
+// 2. Reflect.set(target, prop, value, receiver) - 设置属性值
+Reflect.set(obj, 'x', 10); // true
+console.log(obj.x); // 10
+
+// 3. Reflect.has(target, prop) - 判断属性是否存在（相当于 in 操作符）
+Reflect.has(obj, 'x'); // true
+
+// 4. Reflect.deleteProperty(target, prop) - 删除属性（相当于 delete）
+Reflect.deleteProperty(obj, 'x'); // true
+
+// 5. Reflect.ownKeys(target) - 返回对象的所有自身属性键（包括 Symbol）
+Reflect.ownKeys({ a: 1, b: 2, [Symbol('c')]: 3 }); // ['a', 'b', Symbol(c)]
+
+// 6. Reflect.apply(target, thisArg, args) - 调用函数
+Reflect.apply(Math.max, null, [1, 2, 3]); // 3
+
+// 7. Reflect.construct(target, args) - 相当于 new target(...args)
+const date = Reflect.construct(Date, [2024, 0, 1]);
+
+// Reflect 配合 Proxy 使用的最佳实践：
+const proxy = new Proxy(target, {
+  get(target, prop, receiver) {
+    console.log('读取属性');
+    return Reflect.get(target, prop, receiver); // 使用 Reflect 保证默认行为正确
+  },
+  set(target, prop, value, receiver) {
+    console.log('设置属性');
+    return Reflect.set(target, prop, value, receiver);
+  }
+});
+```
+
+##### for...in 与 for...of 的区别
+```javascript
+// for...in：遍历对象的可枚举属性（包括继承的），获取的是键名
+const obj = { a: 1, b: 2 };
+for (let key in obj) {
+  console.log(key); // 'a', 'b'
+}
+
+// for...of：遍历可迭代对象（Array, Set, Map, String等），获取的是值
+const arr = [10, 20, 30];
+for (let value of arr) {
+  console.log(value); // 10, 20, 30
+}
+
+// 主要区别：
+// 1. for...in 遍历键名，for...of 遍历值
+// 2. for...in 可以遍历普通对象，for...of 不能（除非对象实现了 Symbol.iterator）
+// 3. for...in 会遍历原型链上的可枚举属性，for...of 不会
+// 4. for...of 可以使用 break、continue、return 中断循环
+// 5. for...in 适合遍历对象属性，for...of 适合遍历数组/集合的值
+
+// 数组中使用 for...in 的陷阱：
+const arr2 = [1, 2, 3];
+arr2.extra = 'test';
+for (let key in arr2) {
+  console.log(key); // '0', '1', '2', 'extra' —— 会遍历到非数字属性！
+}
+for (let val of arr2) {
+  console.log(val); // 1, 2, 3 —— 只遍历数组元素
+}
+```

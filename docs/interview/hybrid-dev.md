@@ -10,18 +10,18 @@ sidebar_position: 4
 + 执行 pushy login 输入 email 和密码
 + 执行 pushy selectApp --platform ios 绑定 ios app
 + 执行 pushy selectApp --platform android 绑定 android app
-+ 发布基准版本 app，后续热更新基于此进行差异比对 （已有基准版本则忽略此步骤） 
++ 发布基准版本 app，后续热更新基于此进行差异比对 （已有基准版本则忽略此步骤）
     1. ios: pushy uploadIpa <ipa 后缀文件>
     2. android: pushy uploadApk android/app/build/outputs/apk/release/app-release.apk
     3. (蒲公英上的版本需要与这里上传的 app 相同)
-+ 发布热更新版本，随后输入版本信息，一路 Y 即可 
++ 发布热更新版本，随后输入版本信息，一路 Y 即可
     1. ios: pushy bundle --platform ios
     2. android: pushy bundle --platform android
     3. (后续要继续发布新的热更新，只需反复执行 pushy bundle 命令即可)
 
 # RN 与原生之间通信
 ### ⚡ 一、RN 调用原生代码的三种方式
-1. **原生模块调用（最常用）** 
+1. **原生模块调用（最常用）**
 **原理**：在原生端封装模块，通过 `@ReactMethod`（Android）或 `RCT_EXPORT_METHOD`（iOS）暴露方法，RN 通过 `NativeModules` 调用。
 
 ```java
@@ -40,7 +40,7 @@ NativeModules.MyModule.showToast('Hello from RN!');
 
 **适用场景**：调用摄像头、传感器等平台特定功能。
 
-2. **回调函数（Callback）** 
+2. **回调函数（Callback）**
 **原理**：RN 调用原生方法时传入回调函数，原生代码执行完毕后通过回调返回结果。
 
 ```objectivec
@@ -55,7 +55,7 @@ NativeModules.MyModule.getData((data) => console.log(data));
 
 **注意**：回调仅能调用一次，多次调用可能导致异常。
 
-3. **Promise 机制** 
+3. **Promise 机制**
 **原理**：原生方法返回 Promise 对象，RN 使用 `then/catch` 处理结果。
 
 ```java
@@ -78,7 +78,7 @@ NativeModules.MyModule.fetchData().then(console.log).catch(console.error);
 ---
 
 ### 📡 二、原生主动通知 RN
-1. **事件发射（EventEmitter）** 
+1. **事件发射（EventEmitter）**
 **原理**：原生代码继承 `RCTEventEmitter`，通过 `sendEventWithName` 发送事件，RN 通过 `NativeEventEmitter`监听。
 
 ```objectivec
@@ -260,7 +260,7 @@ JSBridge 的本质是 **利用 WebView 的双向通信能力，在受限的 Web 
 ---
 
 ## 核心通信原理
-JSBridge 的实现依赖于 **WebView 提供的“注入”和“拦截”机制**：
+JSBridge 的实现依赖于 **WebView 提供的"注入"和"拦截"机制**：
 
 | 方向 | 实现方式 |
 | --- | --- |
@@ -277,5 +277,112 @@ JSBridge 的实现依赖于 **WebView 提供的“注入”和“拦截”机制
 | **安全** | 白名单 + 来源校验 + 参数过滤 |
 
 
+# WebView 性能优化
+### 常见优化手段
+1. **WebView 预创建与复用**
+   - 提前初始化 WebView 池，避免每次打开页面都创建新的 WebView 实例
+   - 减少 WebView 初始化耗时（Android 首次创建 WebView 约 500ms~1500ms）
 
+2. **离线包方案**
+   - 将 H5 资源（HTML/CSS/JS/图片）打包为离线包，随 App 下发
+   - 加载时优先读取本地资源，减少网络请求
+   - 配合增量更新，仅下载差异部分
 
+3. **预加载与预渲染**
+   - 在 WebView 不可见时提前加载 URL
+   - 使用预渲染（Prerender）技术，提前生成 DOM
+
+4. **NSURLProtocol / WebViewClient 拦截**
+   - 拦截 WebView 的资源请求，返回本地缓存资源
+   - 适用于图片、字体等静态资源的加载优化
+
+### 白屏时间优化
+```
+白屏时间 = WebView 初始化 + DNS + TCP + HTTP请求 + 页面解析渲染
+
+优化方向：
+├── WebView 初始化优化 → 预创建 WebView 池
+├── 网络优化 → DNS 预解析、连接复用、离线包
+├── 页面渲染优化 → SSR、骨架屏、关键 CSS 内联
+└── 资源加载优化 → CDN、缓存、资源预加载
+```
+
+# Hybrid App 三种开发模式对比
+| 特性 | WebView（H5） | React Native / Weex | Flutter |
+| --- | --- | --- | --- |
+| **渲染方式** | WebView 渲染 HTML | 原生控件渲染 | 自绘引擎（Skia） |
+| **性能** | 较低 | 接近原生 | 接近原生 |
+| **热更新** | 天然支持 | 支持（如 Pushy、CodePush） | 官方不支持 |
+| **开发语言** | HTML/CSS/JS | JavaScript/TypeScript | Dart |
+| **学习成本** | 低 | 中 | 中高 |
+| **适用场景** | 内容展示、活动页 | 复杂交互型 App | 高性能跨端 App |
+
+# 小程序与 H5 的区别
+### 运行环境
+```javascript
+小程序：
+  - 渲染层使用 WebView 渲染，逻辑层使用 JSCore/V8 执行 JS
+  - 双线程模型：渲染线程和逻辑线程分离
+  - 无法直接操作 DOM，通过 setData 更新视图
+
+H5：
+  - 运行在浏览器中，单线程模型
+  - 可以直接操作 DOM
+  - 拥有完整的浏览器 API（如 localStorage、history 等）
+```
+
+### 主要区别
+| 特性 | 小程序 | H5 |
+| --- | --- | --- |
+| **入口** | 无需安装，扫码/搜索即用 | 需要输入 URL 或点击链接 |
+| **体积限制** | 主包 2MB，分包 20MB | 无限制 |
+| **API 能力** | 受限于宿主 App 提供的 API | 拥有完整浏览器 API |
+| **审核机制** | 需要平台审核 | 无需审核 |
+| **离线能力** | 支持（本地缓存） | 需要 Service Worker |
+| **分享能力** | 内置社交分享（如微信） | 需要借助 SDK |
+
+# 移动端适配方案
+### 常见方案
+```css
+/* 1. rem 方案（flexible.js） */
+html { font-size: calc(100vw / 7.5); }  /* 以 750px 设计稿为基准 */
+.box { width: 3.75rem; }  /* 等于 375px 设计稿中的一半宽度 */
+
+/* 2. vw/vh 方案（推荐） */
+.box {
+  width: 50vw;      /* 视口宽度的 50% */
+  height: 25vh;     /* 视口高度的 25% */
+  font-size: 4.267vw; /* 750 设计稿中 32px = 32/750*100 */
+}
+
+/* 3. 媒体查询 */
+@media screen and (max-width: 768px) {
+  .container { padding: 10px; }
+}
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+  .container { padding: 20px; }
+}
+```
+
+### 1px 问题
+```css
+/* 在 Retina 屏上 1px CSS 像素会显示为 2px 或 3px 物理像素 */
+
+/* 方案一：伪元素 + transform */
+.border-1px::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 100%;
+  height: 1px;
+  background: #000;
+  transform: scaleY(0.5);
+  transform-origin: 0 0;
+}
+
+/* 方案二：使用 0.5px（仅 iOS 8+ 支持） */
+.border { border-width: 0.5px; }
+
+/* 方案三：使用 viewport 缩放 */
+<meta name="viewport" content="initial-scale=0.5, maximum-scale=0.5, minimum-scale=0.5">
+```

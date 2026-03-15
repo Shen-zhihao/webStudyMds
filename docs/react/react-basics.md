@@ -75,7 +75,7 @@ function workLoop(deadline) {
     while (nextUnitOfWork && !shouldYield(deadline)) {
         nextUnitOfWork = performUnitOfWork(nextUnitOfWork);
       }
-    
+
     if (nextUnitOfWork) {
         // 时间片用完，下次空闲继续
         scheduleCallback(workLoop);
@@ -103,7 +103,7 @@ function shouldYield(deadline) {
 ##### React 和 React Dom 有什么关系
 ● React 是核心库，负责定义组件、管理状态和生命周期，并创建描述界面的虚拟 DOM 对象。
 
-● ReactDOM 是一个专门用于浏览器环境的“渲染器”，它的核心任务就是将 React 创建的虚拟 DOM 渲染到真实的浏览器 DOM 中，并处理用户交互。
+● ReactDOM 是一个专门用于浏览器环境的"渲染器"，它的核心任务就是将 React 创建的虚拟 DOM 渲染到真实的浏览器 DOM 中，并处理用户交互。
 
 ##### React虚拟DOM
 ```html
@@ -121,7 +121,7 @@ React通过虚拟DOM树的比较，避免了直接操作真实DOM树带来的性
 
 ```javascript
 1、框架设计原因：render函数无法绑定更新的数据，会全量生成渲染dom，开销比较高；
-2、跨平台 
+2、跨平台
 ```
 
 ##### React Diff算法
@@ -354,6 +354,11 @@ class App extends Component {
 ! setState在定时器里面是同步的
 ! setState在原生js里面是同步的
 
+// 注意：以上关于 setState 同步/异步的描述仅适用于 React 17 及更早版本。
+// 在 React 18+ 中，setState 在所有场景下都是自动批处理（batched）的，即始终表现为"异步"。
+// 包括 setTimeout、原生事件处理函数、Promise 回调等场景，setState 都不会立即更新状态。
+// 如需在 React 18+ 中强制同步更新，可使用 ReactDOM.flushSync()。
+
 //setState有两种写法
 //第一种是里面写对象,允许setState传第二个参数，是回调函数
     this.setState(               //需要修正this的指向
@@ -364,7 +369,7 @@ class App extends Component {
         console.log(this.state.count);
       }
     );
-    
+
 //第二种方式是里面写函数, 可以接收一个参数(任意形参)，表示前一次的state,允许setState传第二个参数，是回调函数
     this.setState(                                  //需要修正this的指向
       (prevState) => {
@@ -489,7 +494,7 @@ class App extends Component {
   UNSAFE_componentWillReceiveProps(nextProps) {
     console.log(nextProps);
   }
-  
+
 //决定子组件是否重新渲染
 // 必须要返回true或者false, 通过返回true或者false来控制是否要重新渲染当前组件
 // 可以接收两个参数，新的props和新的state，旧的还是this.props.xxx
@@ -497,17 +502,17 @@ class App extends Component {
 shouldComponentUpdate(nextProps, nextState) {
     return nextState.count !== this.state.count;
   }
-  
+
 // 被弃用
   UNSAFE_componentWillUpdate() {
     console.log("componentWillUpdate");
   }
-   
+
 // 更新结束
 // 不能在这里更新数据
   componentDidUpdate() {
     console.log("componentDidUpdate");
-  } 
+  }
 ```
 
 ##### 卸载阶段
@@ -538,7 +543,7 @@ componentWillUnmount() {
     // 快照就是某一条记录或者某一个值，return出来被销毁周期接收
     return prevState;
   }
-  
+
 // componentDidUpdate第三个参数就是getSnapshotBeforeUpdate里面return的那个值
   componentDidUpdate(prevProps, prevState, snapshot) {
     console.log(snapshot);
@@ -721,7 +726,7 @@ export default class App extends Component{
             </div>
         );
     }
-} 
+}
 
 Sub.js代码：
 import React from "react";
@@ -776,7 +781,7 @@ render() {
       </Provider>
     );
   }
-  
+
 //子组件用Consumer去接收，里面写一个函数，参数为Value
      <Consumer>
           {(value) => (
@@ -1014,12 +1019,12 @@ export default Index;
 1、安装redux-thunk库，并且在reducer的index文件中解构applyMiddleware
     $yarn add redux-thunk
 // applyMiddleware表示中间件
-    import { createStore, applyMiddleware } from "redux"; 
+    import { createStore, applyMiddleware } from "redux";
 //引入redux-thunk
-    import thunk from "redux-thunk";       
+    import thunk from "redux-thunk";
 // applyMiddleware执行的时候要接收一个参数, 里面接收redux的异步库
     const store = createStore(reducer, applyMiddleware(thunk));
-        
+
 2、创建一个异步函数去调用同步函数，改变数据
     export const loadAsyncAction = () => {
       // redux-thunk异步库允许我们在这里return函数， 并且可以接收dispatch接收参数
@@ -1133,7 +1138,7 @@ const customize = () => (config, env) => {
       'react-dom': 'ReactDOM'
     }
   }
-  
+
   return config
 };
 module.exports = override(addDecoratorsLegacy(), customize())
@@ -1150,17 +1155,17 @@ yarn add customize-cra react-app-rewired
           "eject": "react-app-rewired eject"
   },
     ...
-    
-    6、使用withRoute
+
+    6、使用withRouter
     import { withRouter } from "react-router-dom";
 //在需要获得路由信息的组件前使用
-    @withRoute
+    @withRouter
 ```
 
 ## 移动端适配
 ```javascript
 1、在config-overrides.js中的customize-cra去配置，customize-cra是一个NPM包，用来做webpack的配置；
-2、下载插件 postcss-px2rem 
+2、下载插件 postcss-px2rem
 3、修改config-overrides.js文件(新增以下内容)
     const {addPostcssPlugins } = require("customize-cra");
     module.exports = override(

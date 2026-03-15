@@ -46,14 +46,14 @@ let num:unknown
 
 10、null和undefined：
 let num:number|undefined|null
-let num:number|undefined|nul
+let num:number|undefined|null
 
 11、void类型（函数无返回值）：
 function fn():void{
   console.log('q'); 
 }
 
-12、never类型：never表示其他类型的（包括null和underfined）子类型，表示从未出现过的值，是一个隐含的类型。
+12、never类型：never表示其他类型的（包括null和undefined）子类型，表示从未出现过的值，是一个隐含的类型。
 
 注意：大写Boolean Number String 等，用于创建对应的包装对象，一般不用。
 ```
@@ -327,7 +327,7 @@ interface Iadd<T> {
   (x:T,y:T):T;
 }
 
-var add:Tadd<number> = function(x:number,y:number):number {
+var add:Iadd<number> = function(x:number,y:number):number {
   return x + y
 }
 ```
@@ -347,5 +347,71 @@ function getLength<T extends Ilength>(arg:T):T {
 getLength('abcd') // 4
 
 getLength(7) // error: Argument of type '7' is not assignable to parameter of type 'Ilength'.
+```
+
+# 高级类型
+##### 常用工具类型（Utility Types）
+```typescript
+// Partial<T> - 将所有属性变为可选
+interface User { name: string; age: number; }
+type PartialUser = Partial<User>; // { name?: string; age?: number; }
+
+// Required<T> - 将所有属性变为必选
+type RequiredUser = Required<PartialUser>; // { name: string; age: number; }
+
+// Readonly<T> - 将所有属性变为只读
+type ReadonlyUser = Readonly<User>; // { readonly name: string; readonly age: number; }
+
+// Pick<T, K> - 从类型中选取部分属性
+type UserName = Pick<User, 'name'>; // { name: string; }
+
+// Omit<T, K> - 从类型中排除部分属性
+type UserWithoutAge = Omit<User, 'age'>; // { name: string; }
+
+// Record<K, T> - 构造一个属性键为 K、属性值为 T 的类型
+type Roles = 'admin' | 'user' | 'guest';
+type RolePermissions = Record<Roles, boolean>; // { admin: boolean; user: boolean; guest: boolean; }
+
+// Exclude<T, U> - 从联合类型 T 中排除 U
+type T1 = Exclude<'a' | 'b' | 'c', 'a'>; // 'b' | 'c'
+
+// Extract<T, U> - 从联合类型 T 中提取 U
+type T2 = Extract<'a' | 'b' | 'c', 'a' | 'b'>; // 'a' | 'b'
+
+// NonNullable<T> - 排除 null 和 undefined
+type T3 = NonNullable<string | null | undefined>; // string
+```
+
+##### 条件类型（Conditional Types）
+```typescript
+// 基本语法：T extends U ? X : Y
+type IsString<T> = T extends string ? 'yes' : 'no';
+type A = IsString<string>;  // 'yes'
+type B = IsString<number>;  // 'no'
+
+// infer 关键字：在条件类型中推断类型
+type ReturnTypeOf<T> = T extends (...args: any[]) => infer R ? R : never;
+type Fn = () => string;
+type FnReturn = ReturnTypeOf<Fn>; // string
+
+// 分布式条件类型：当 T 是联合类型时，条件类型会分布到每个成员
+type ToArray<T> = T extends any ? T[] : never;
+type StrOrNumArr = ToArray<string | number>; // string[] | number[]
+```
+
+##### 映射类型（Mapped Types）
+```typescript
+// 基本映射类型
+type Stringify<T> = {
+  [K in keyof T]: string;
+};
+interface Point { x: number; y: number; }
+type StringPoint = Stringify<Point>; // { x: string; y: string; }
+
+// 使用 as 重映射键名（TS 4.1+）
+type Getters<T> = {
+  [K in keyof T as `get${Capitalize<string & K>}`]: () => T[K];
+};
+type UserGetters = Getters<User>; // { getName: () => string; getAge: () => number; }
 ```
 

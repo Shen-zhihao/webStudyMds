@@ -3,7 +3,7 @@ title: "Next.js 常见问题"
 sidebar_position: 2
 ---
 
-# 如何结局水合问题
+# 如何解决水合问题
 1. 客户端特有API在服务端被调用 服务端渲染时（如Next.js的 pages 或 app 目录的服务端组件）若直接使用 window 、 document 、 navigator 等仅客户端存在的API，会导致服务端渲染的HTML与客户端实际渲染结果不一致。例如：
 
 ```tsx
