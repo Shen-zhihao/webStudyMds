@@ -17,6 +17,7 @@ const config = {
 
   markdown: {
     format: "detect",
+    mermaid: true,
   },
 
   i18n: {
@@ -43,6 +44,7 @@ const config = {
   ],
 
   themes: [
+    "@docusaurus/theme-mermaid",
     [
       "@easyops-cn/docusaurus-search-local",
       /** @type {import("@easyops-cn/docusaurus-search-local").PluginOptions} */
