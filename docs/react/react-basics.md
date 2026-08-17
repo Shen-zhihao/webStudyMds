@@ -1,12 +1,9 @@
----
-title: "React 基础"
-sidebar_position: 1
----
-
 # 核心设计
- React 是一个专注于构建用户界面的 声明式 JavaScript 库，其单向数据流和组件化设计与 MVVM 的双向绑定和 ViewModel 层有本质区别。虽然 React 可通过第三方库（如 MobX）实现类似 MVVM 的响应式效果，但其核心机制仍不属于 MVVM 架构。
+
+React 是一个专注于构建用户界面的 声明式 JavaScript 库，其单向数据流和组件化设计与 MVVM 的双向绑定和 ViewModel 层有本质区别。虽然 React 可通过第三方库（如 MobX）实现类似 MVVM 的响应式效果，但其核心机制仍不属于 MVVM 架构。
 
 ##### React Fiber
+
 ```javascript
 React Fiber 是 React 16 引入的一种新的协调引擎，旨在提高 React 应用的性能和响应能力。
 Fiber 通过增量渲染、可中断与恢复、链表结构和优先级调度等机制，使得 React 可以更灵活地处理大量更新和复杂组件树。
@@ -19,6 +16,7 @@ Fiber 通过增量渲染、可中断与恢复、链表结构和优先级调度�
 ```
 
 ###### Fiber 调度流程图（简化）
+
 ```plain
 用户触发 setState()
         ↓
@@ -36,40 +34,44 @@ Render 完成 → Commit 阶段（同步更新 DOM）
 ```
 
 ###### 1. Fiber 节点：工作单元
+
 每个 React 元素对应一个 **Fiber 节点**，它是一个 JavaScript 对象，包含：
 
-+ `type`：组件类型（div / MyComponent）
-+ `props`：属性
-+ `child` / `sibling` / `return`：构成**链表式树结构**（便于遍历）
-+ `alternate`：指向 work-in-progress 树（用于双缓存）
-+ `effectTag`：标记副作用（如插入、更新、删除）
+- `type`：组件类型（div / MyComponent）
+- `props`：属性
+- `child` / `sibling` / `return`：构成**链表式树结构**（便于遍历）
+- `alternate`：指向 work-in-progress 树（用于双缓存）
+- `effectTag`：标记副作用（如插入、更新、删除）
 
 ###### 2. 双阶段架构：Render 阶段 + Commit 阶段
-| 阶段 | 是否可中断 | 作用 |
-| --- | --- | --- |
-| **Render 阶段** | ✅ 可中断 | 生成 Fiber 树，计算变更（diff） |
+
+| 阶段            | 是否可中断  | 作用                                   |
+| --------------- | ----------- | -------------------------------------- |
+| **Render 阶段** | ✅ 可中断   | 生成 Fiber 树，计算变更（diff）        |
 | **Commit 阶段** | ❌ 不可中断 | 应用变更到 DOM（调用生命周期、副作用） |
 
-
 ###### 3. 调度器（Scheduler）：基于优先级的时间切片
+
 React 使用 `**Scheduler**`** 包**（独立于 React）实现任务调度：
 
 ###### 🔹 核心思想：
-+ 将任务分配**优先级（Lane 模型）**
-+ 利用 `**requestIdleCallback**`**（或 polyfill）** 在浏览器空闲时执行低优先级任务
-+ 高优先级任务（如用户点击）可**打断**低优先级任务
+
+- 将任务分配**优先级（Lane 模型）**
+- 利用 `**requestIdleCallback**`**（或 polyfill）** 在浏览器空闲时执行低优先级任务
+- 高优先级任务（如用户点击）可**打断**低优先级任务
 
 ###### 🔹 优先级分类（从高到低）：
-| 优先级 | 触发场景 |
-| --- | --- |
-| **Immediate** | `ReactDOM.flushSync()`、错误边界 |
-| **User Blocking** | 用户交互（点击、输入） |
-| **Normal** | 默认更新（如 `setState`） |
-| **Low** | 数据更新（如网络请求结果） |
-| **Idle** | 预加载、非关键更新 |
 
+| 优先级            | 触发场景                         |
+| ----------------- | -------------------------------- |
+| **Immediate**     | `ReactDOM.flushSync()`、错误边界 |
+| **User Blocking** | 用户交互（点击、输入）           |
+| **Normal**        | 默认更新（如 `setState`）        |
+| **Low**           | 数据更新（如网络请求结果）       |
+| **Idle**          | 预加载、非关键更新               |
 
 ###### 4. 工作循环（Work Loop）：可中断的遍历
+
 ```javascript
 function workLoop(deadline) {
     while (nextUnitOfWork && !shouldYield(deadline)) {
@@ -93,6 +95,7 @@ function shouldYield(deadline) {
 ```
 
 ###### 5. 任务插队与重排（Lane 模型）
+
 当高优先级更新到来时：
 
 1. 中断当前低优先级 Render
@@ -101,20 +104,21 @@ function shouldYield(deadline) {
 4. 完成后恢复低优先级任务（可能丢弃部分已计算结果）
 
 ##### React 和 React Dom 有什么关系
+
 ● React 是核心库，负责定义组件、管理状态和生命周期，并创建描述界面的虚拟 DOM 对象。
 
 ● ReactDOM 是一个专门用于浏览器环境的"渲染器"，它的核心任务就是将 React 创建的虚拟 DOM 渲染到真实的浏览器 DOM 中，并处理用户交互。
 
 ##### React虚拟DOM
+
 ```html
 React提出的一种解决方案，它是一个轻量级的JavaScript对象，用来描述真实DOM的结构和属性。
 React通过比较虚拟DOM的差异，计算出需要更新的部分，然后再将这些部分更新到真实DOM上。
-React虚拟DOM的原理是：
-1. 首先，React将组件的状态和属性传入组件的render方法，得到一个虚拟DOM树。
-2. 当组件的状态或属性发生变化时，React会再次调用render方法得到新的虚拟DOM树。
-3. React会将新旧两棵虚拟DOM树进行比较，得到它们的不同之处。
-4. React会将这些不同之处记录下来，然后批量的更新到真实的DOM树上。
-
+React虚拟DOM的原理是： 1.
+首先，React将组件的状态和属性传入组件的render方法，得到一个虚拟DOM树。 2.
+当组件的状态或属性发生变化时，React会再次调用render方法得到新的虚拟DOM树。 3.
+React会将新旧两棵虚拟DOM树进行比较，得到它们的不同之处。 4.
+React会将这些不同之处记录下来，然后批量的更新到真实的DOM树上。
 React通过虚拟DOM树的比较，避免了直接操作真实DOM树带来的性能问题，因为直接操作真实DOM树会带来大量的重排和重绘，而React的虚拟DOM树的比较和更新是基于JavaScript对象进行的，不会导致页面的重排和重绘。
 总结起来，React虚拟DOM的原理就是：通过比较虚拟DOM树的不同，批量的更新真实的DOM树，从而提高页面的性能。
 ```
@@ -125,31 +129,40 @@ React通过虚拟DOM树的比较，避免了直接操作真实DOM树带来的性
 ```
 
 ##### React Diff算法
-```javascript
-React Diff是React中用于更新Virtual DOM的算法它的目的是在最小化DOM操作的同时，尽可能快地更新组件。它通过比较Virtual DOM树的前后两个状态来确定哪些部分需要更新。
-React Diff算法的核心思想是尽可能地复用已有的DOM节点。当Virtual DOM中的某个节点发生变化时，React会先比较该节点的属性和子节点是否有变化，如果没有变化，则直接复用该节点。如果有变化，则会在该节点的父节点下创建一个新的节点，并将新的属性和子节点赋值给该节点。
-React Diff算法的具体实现有两种方式：深度优先遍历和广度优先遍历。深度优先遍历是指先比较父节点的子节点，如果子节点有变化，则递归比较子节点的子节点。广度优先遍历是指先比较同级节点，如果同级节点有变化，则递归比较子节点。
-React Diff算法的优化策略包括：key属性的使用、组件的shouldComponentUpdate方法、使用Immutable.js等。其中，key属性的使用是最常用的优化策略，它可以帮助React更准确地判断哪些节点需要更新，从而减少不必要的DOM操作。
 
-React Diff算法具有以下特点：
-1. 先判断两个节点是否相等，如果相等，就不需要更新。
-2. 如果两个节点类型不同，则直接替换节点。
-3. 如果节点类型相同，但是节点属性不同，则更新节点属性。
-4. 如果节点类型相同，但是子节点不同，则使用递归的方式进行更新。
-React Diff算法的时间复杂度是O(n)，其中n为Virtual DOM树中节点的数量。
+React Diff 是 React 在更新界面时使用的一套对比策略，目标是在可接受的时间复杂度内，尽量复用已有节点并减少真实 DOM 操作。它并不会对整棵树做完全精确的最优比较，而是基于一组启发式规则在性能和结果之间做平衡。
 
-// 实例：
-在React中，渲染数组时将数组的第一项移动到最后渲染的开销通常比将最后一项移动到第一项渲染的开销要大：
+React Diff 的核心规则主要有：
 
-这是因为React使用了虚拟DOM（Virtual DOM）来进行高效的DOM操作。
-当数组中的元素发生变化时，React会比较新旧虚拟DOM树的差异，并只更新需要更新的部分。
-如果将数组的第一项移动到最后，React需要重新计算并比较整个数组的差异，这可能会导致更多的DOM操作。
-相比之下，将最后一项移动到第一项只会影响数组的第一项和最后一项，而不会影响其他元素的位置。
-因此，React只需要比较这两个元素的差异，并进行相应的DOM操作，这通常比重新计算整个数组的差异要更高效。
-```
+1. 只会比较同一层级的节点，不会跨层级做复杂移动比较。
+2. 如果两个节点类型不同，通常会直接卸载旧节点并创建新节点。
+3. 如果节点类型相同，React 会复用该节点，并继续比较它的属性和子节点。
+4. 在渲染列表时，`key` 非常重要。稳定的 `key` 可以帮助 React 判断节点是复用、插入、删除，还是需要移动。
+
+正因为采用了这些启发式规则，React 才能将常见场景下的 Diff 成本控制在接近 `O(n)`，而不是退化为对树结构做高成本的通用比较。
+
+例如在列表渲染中，下面这句话需要更谨慎地理解：
+
+> 将数组的第一项移动到最后，通常会比将最后一项移动到第一项产生更高的协调开销。
+
+这个说法在很多带稳定 `key` 的场景下是**有可能成立的**，但原因并不是“前者会重新比较整个数组，而后者只影响首尾两个元素”。更准确地说，这是由 React 列表 Diff 的遍历和位置判断方式决定的：
+
+- 当第一项被移到最后时，后续多个节点更容易被判定为位置发生了变化。
+- 当最后一项被移到第一项时，React 在某些情况下能更顺畅地复用后续节点。
+
+不过这并不是绝对结论，实际开销还和以下因素有关：
+
+- 是否使用了稳定的 `key`
+- 列表长度
+- 子组件本身的渲染成本
+- React 当前版本的具体实现
+
+因此，关于列表重排，更稳妥的结论是：**带稳定 `key` 的前提下，不同重排方式的协调成本可能不同，但不能简单理解为“只影响首尾两个节点”**。
 
 # 组件和基础
+
 ##### 组件生成方式（命令式）
+
 ```bash
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -165,8 +178,9 @@ ReactDOM.render(myDiv, container);
 ```
 
 ##### 组件的生成方式（声明式）
+
 ```javascript
-import React, { Component }from "react";
+import React, { Component } from "react";
 //组件名首字母大写
 //类生成方式
 class Header extends Component {
@@ -201,6 +215,7 @@ export default App;
 ```
 
 ##### 受控组件
+
 ```javascript
 //内容可以由我们自己来控制的组件，必须要有value和onChange
 class App extends Component {
@@ -237,14 +252,15 @@ class App extends Component {
 ```
 
 ##### 非受控组件
+
 ```javascript
 //解构createRef，创建Refs并通过ref属性联系到React组件。Refs通常当组件被创建时被分配给实例变量，这样它们就能在组件中被引用。
 import React, { Component, createRef } from "react";
 class App extends Component {
-  num = createRef();       //current 属性是唯一可用的属性
+  num = createRef(); //current 属性是唯一可用的属性
   handleClick2 = (ipt) => {
     console.log(this.num.current.value);
-  }
+  };
   render() {
     return (
       <>
@@ -257,6 +273,7 @@ class App extends Component {
 ```
 
 ##### 样式和类
+
 ```javascript
 1、组件中的内联样式
 class Header extends React.Component {
@@ -314,6 +331,7 @@ export default App;
 ```
 
 ##### state-状态
+
 ```javascript
 1、通过申明式地定义state
 class App extends Component {
@@ -384,6 +402,7 @@ class App extends Component {
 ```
 
 ##### Portal（改变元素在DOM结构中的位置）
+
 ```javascript
 //解构
 import { createPortal } from "react-dom";
@@ -393,7 +412,8 @@ class App extends Component {
     return (
       <div>
         <h3>portal</h3>
-        {createPortal(<Child />, document.querySelector("html"))}             //函数，传入两个参数，第一个为组件，第二个为位置
+        {createPortal(<Child />, document.querySelector("html"))}{" "}
+        //函数，传入两个参数，第一个为组件，第二个为位置
       </div>
     );
   }
@@ -401,7 +421,9 @@ class App extends Component {
 ```
 
 # 类组件生命周期
+
 ##### React组件的生命周期分为三个阶段：挂载阶段、更新阶段和卸载阶段
+
 ```javascript
 挂载阶段包括以下方法：
 
@@ -423,6 +445,7 @@ class App extends Component {
 ```
 
 ##### react更新触发生命周期
+
 ```javascript
 1. componentWillReceiveProps(nextProps)
    当父组件接收到新的props时，会触发该生命周期方法。子组件的改变可能会导致父组件的props发生变化，从而触发该方法。
@@ -443,10 +466,13 @@ class App extends Component {
 ```
 
 ## 类组件的生命周期-旧版
+
 <!-- 这是一张图片，ocr 内容为：父组件RENDER 挂载时 COMPONENTWILLRECEIVEPROPS CONSTRUCTOR SETSTATE() SHOULDCOMPONENTUPDATE COMPONENTWILLMOUNT FORCEUPDATE() COMPONENTWILLUPDATE RENDER COMPONENTDIDUPDATE COMPONENTDIDMOUNT COMPONENTWILLUNMOUNT -->
+
 ![](https://cdn.nlark.com/yuque/0/2022/jpeg/28684553/1654827251234-ffb3ca94-f299-4651-92ec-bd4523b5fa3a.jpeg)
 
 ##### 初始化
+
 ```javascript
   // 当这个类被实例化的时候就会自动执行，最先执行，并且只执行一次
   constructor(props) {               // 当props的值需要作为state的初始值的时候
@@ -459,6 +485,7 @@ class App extends Component {
 ```
 
 ##### 挂载阶段
+
 ```javascript
  // componentWillMount是被废弃了, 改名成了UNSAFE_componentWillMount
   UNSAFE_componentWillMount() {
@@ -488,6 +515,7 @@ class App extends Component {
 ```
 
 ##### 更新阶段
+
 ```javascript
 // 被废弃了, 因为现在由更好的生命周期来代替
 // 当父组件传递的自定义属性发生改变时就会触发
@@ -516,6 +544,7 @@ shouldComponentUpdate(nextProps, nextState) {
 ```
 
 ##### 卸载阶段
+
 ```javascript
 //组件将要销毁
 componentWillUnmount() {
@@ -525,10 +554,13 @@ componentWillUnmount() {
 ```
 
 ## 类组件的生命周期-新版
+
 <!-- 这是一张图片，ocr 内容为：更新时 卸载时 挂载时 FORCEUPDATE) NEW PROPS SETSTATE( CONSTRUCTOR GETDERIVEDSTATEFROMPROPS SHOULDCOMPONENTUPDATE X RENDER GETSNAPSHOTBEFOREUODATE REACT更新DOM和REFS COMPONENTDIDMOUNT COMPONENTDIDUPDATE COMPONENTWILLUNMOUNT -->
+
 ![](https://cdn.nlark.com/yuque/0/2022/jpeg/28684553/1654827355097-329ccf06-da37-41be-aebc-08fcb6d15c00.jpeg)
 
 ##### getDerivedStateFromProps
+
 ```javascript
 // 根据props的值去获取一个新的state
 // 它前面要有一个static关键字
@@ -536,6 +568,7 @@ componentWillUnmount() {
 ```
 
 ##### getSnapshotBeforeUpdate
+
 ```javascript
 // 生成一个快照在更新之前
 // 拿到更新前的状态给更新以后用
@@ -551,7 +584,9 @@ componentWillUnmount() {
 ```
 
 # 传参与通信
+
 ##### props传值检测
+
 ```javascript
 //安装包prop-types
 $ npm i prop-types -S
@@ -578,6 +613,7 @@ Child.propTypes = {
 ```
 
 ##### 父组件向子组件通信：使用 props
+
 ```javascript
 父组件 App.js：
 import React,{ Component } from "react";
@@ -607,6 +643,7 @@ export default Sub;
 ```
 
 ##### 子组件向父组件通信：使用 props 回调
+
 ```javascript
 SubComponent.js代码：
 import React from "react";
@@ -643,6 +680,7 @@ export default class App extends Component{
 ```
 
 ##### 兄弟间的传参
+
 ```javascript
 1：子组件1中的事件去触发定义在父组件中的自定义事件，并传入子组件中的变量
 class Child1 extends Component {
@@ -697,6 +735,7 @@ class Done extends Component {
 ```
 
 ##### 跨级组件间通信：使用 context 对象
+
 ```javascript
 App.js代码：
 import React, { Component } from 'react';
@@ -795,6 +834,7 @@ render() {
 ```
 
 ##### 父组件调用子组件的方法
+
 ```javascript
 在 React 中，可以使用 `ref` 来获取子组件的实例，并调用其方法。下面是一个示例：假设有一个子组件 `Child`，其中有一个 `handleClick` 方法：
 
@@ -881,12 +921,15 @@ export default ParentComponent;
 ```
 
 # 全局状态管理Redux
+
 ##### 依赖安装
+
 ```javascript
 yarn add redux react-redux redux-actions --save -D
 ```
 
 ##### 创建reducers
+
 ```javascript
 // 子reduce.js文件
 import { handleActions } from "redux-actions";
@@ -921,6 +964,7 @@ export default rootReducer;
 ```
 
 ##### 创建actions
+
 ```javascript
 import { createAction } from "redux-actions";
 
@@ -930,27 +974,28 @@ export const updateCount = createAction("UPDATE_COUNT");
 ```
 
 ##### 创建store
+
 ```javascript
 // src/store/index.js
-import { createStore, applyMiddleware } from 'redux';
-import { routerMiddleware } from 'react-router-redux';
-import thunkMiddleware from 'redux-thunk';
-import logger from 'redux-logger';      // 日志
-import rootReducer from '../reducers';
+import { createStore, applyMiddleware } from "redux";
+import { routerMiddleware } from "react-router-redux";
+import thunkMiddleware from "redux-thunk";
+import logger from "redux-logger"; // 日志
+import rootReducer from "../reducers";
 
 const routeMiddleware = routerMiddleware();
 
 let createStoreWithMiddleware;
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== "production") {
   createStoreWithMiddleware = applyMiddleware(
     thunkMiddleware,
     routeMiddleware,
-    logger
+    logger,
   )(createStore);
 } else {
   createStoreWithMiddleware = applyMiddleware(
     thunkMiddleware,
-    routeMiddleware
+    routeMiddleware,
   )(createStore);
 }
 
@@ -960,6 +1005,7 @@ export default store;
 ```
 
 ##### 穿透整个项目文件
+
 ```javascript
 import React, { Suspense } from "react";
 import ReactDOM from "react-dom/client";
@@ -984,11 +1030,12 @@ root.render(
         </Switch>
       </Suspense>
     </Router>
-  </Provider>
+  </Provider>,
 );
 ```
 
 ##### 项目文件使用
+
 ```javascript
 import { useSelector, useDispatch } from "react-redux";
 import { updateCount } from "@actions/root";
@@ -1013,7 +1060,9 @@ export default Index;
 ```
 
 ## redux异步操作
+
 ##### 异步操作- redux-thunk库
+
 ```javascript
 //action必须是扁平化对象
 1、安装redux-thunk库，并且在reducer的index文件中解构applyMiddleware
@@ -1049,19 +1098,22 @@ export default Index;
 ```
 
 # 懒加载Lazy
+
 ##### import函数
+
 ```javascript
 //import 命令
-import { add } from './math';
+import { add } from "./math";
 console.log(add(16, 26));
 
 //import函数
-import("./math").then(math => {
+import("./math").then((math) => {
   console.log(math.add(16, 26));
 });
 ```
 
 ##### lazy函数和Suspense组件-组件中的使用
+
 ```javascript
 1、解构lazy、Suspense
     import { lazy, Suspense } from "react";
@@ -1074,6 +1126,7 @@ import("./math").then(math => {
 ```
 
 ##### lazy函数和Suspense组件-路由中的使用
+
 ```javascript
 const Home = lazy(() => import("./Home"));
 const About = lazy(() => import("./About"));
@@ -1103,6 +1156,7 @@ class App extends Component {
 ```
 
 # 装饰器
+
 ```javascript
 1、下载安装依赖
 yarn add @babel/core @babel/plugin-proposal-decorators @babel/preset-env
@@ -1163,6 +1217,7 @@ yarn add customize-cra react-app-rewired
 ```
 
 ## 移动端适配
+
 ```javascript
 1、在config-overrides.js中的customize-cra去配置，customize-cra是一个NPM包，用来做webpack的配置；
 2、下载插件 postcss-px2rem
@@ -1174,6 +1229,7 @@ yarn add customize-cra react-app-rewired
 ```
 
 # HOC高阶组件
+
 ```javascript
 // 高阶组件=>函数， 传入一个组件(函数组件、类组件)，返回一个新组件
 // 作用： 增强组件的功能，复用
@@ -1184,12 +1240,12 @@ const withHoc = (Comp) => {
       console.log(this.props);
       return (
         <>
-          <Comp msg="hello" {...this.props} />     //展开合并原有属性
+          <Comp msg="hello" {...this.props} /> //展开合并原有属性
         </>
       );
     }
   };
-}
+};
 
 //在其他组件中使用
 export default withHoc(App);
